@@ -22,7 +22,7 @@ public class Activity {
     @Column(columnDefinition = "CLOB")
     private String description;
 
-    @Column(name= "due_date", nullable = false)
+    @Column(name = "due_date")
     private LocalDate dueDate;
 
     @Column(nullable = false)
