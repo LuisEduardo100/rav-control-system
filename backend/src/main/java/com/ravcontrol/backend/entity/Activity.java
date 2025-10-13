@@ -113,7 +113,7 @@ public class Activity {
         this.group = group;
     }
 
-    protected void attachToGroup(ActivityGroup group, int position) {
+    public void attachToGroup(ActivityGroup group, int position) {
         this.group = group;
         this.position = position;
     }
