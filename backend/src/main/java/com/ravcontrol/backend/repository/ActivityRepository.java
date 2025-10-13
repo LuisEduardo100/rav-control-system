@@ -11,6 +11,13 @@ import java.util.List;
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
     /**
+     * Esse método retornará o valor total de atividades do grupo
+     * @param groupId id do grupo que a atividade pertence
+     * @return retorna o valor de atividades presentes no grupo
+     */
+    int countByGroupId(Long groupId);
+
+    /**
      * Esse método busca atividades pelo nome, contendo letras de name e ignorando case maiúscula/minúscula
      * @param name Nome da atividade a ser buscada
      * @return Uma lista de atividades que correspondem ao critério

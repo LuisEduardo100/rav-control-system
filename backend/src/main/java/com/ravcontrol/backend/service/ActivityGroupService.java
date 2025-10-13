@@ -4,6 +4,7 @@ import com.ravcontrol.backend.dto.activityGroup.request.ActivityGroupRequestDTO;
 import com.ravcontrol.backend.dto.activityGroup.response.ActivityGroupResponseDTO;
 import com.ravcontrol.backend.entity.ActivityGroup;
 import com.ravcontrol.backend.repository.ActivityGroupRepository;
+import com.ravcontrol.backend.service.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,10 +40,21 @@ public class ActivityGroupService {
 
     @Transactional
     public ActivityGroupResponseDTO updateGroup(Long groupId, ActivityGroupRequestDTO dto) {
-        ActivityGroup group = groupRepository.findById(groupId).orElseThrow(() -> new )
+        ActivityGroup group = groupRepository
+            .findById(groupId).
+            orElseThrow(() -> new ResourceNotFoundException("Grupo não encontrado para o ID" + groupId));
 
+        group.setName(dto.name());
+        ActivityGroup updatedGroup = groupRepository.save(group);
+
+        return ActivityGroupResponseDTO.fromEntity(updatedGroup);
     }
 
-
-
+    @Transactional
+    public void deleteGroup(Long groupId) {
+        if (!groupRepository.existsById(groupId)) {
+            throw new ResourceNotFoundException("Grupo não encontrado para o ID" + groupId);
+        }
+        groupRepository.deleteById(groupId);
+    }
 }
