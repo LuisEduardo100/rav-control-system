@@ -27,7 +27,6 @@ public class ActivityGroup {
     @OneToMany(
         mappedBy = "group",
         cascade = CascadeType.ALL,
-        orphanRemoval = true,
         fetch = FetchType.LAZY
     )
     private List<Activity> activities = new ArrayList<>();
@@ -68,9 +67,11 @@ public class ActivityGroup {
         return activities;
     }
 
-    public void addActivity(Activity activity) {
-        this.activities.add(activity);
+    public void addActivity(Activity activity, int position) {
+        int insertPosition = Math.min(position, this.activities.size());
+        this.activities.add(insertPosition, activity);
         activity.setGroup(this);
+        activity.setPosition(insertPosition);
     }
 
     public void removeActivity(Activity activity) {

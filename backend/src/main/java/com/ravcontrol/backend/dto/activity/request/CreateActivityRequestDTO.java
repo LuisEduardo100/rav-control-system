@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.LocalDate;
+
 public record CreateActivityRequestDTO(
     @NotBlank(message = "O nome da atividade é obrigatório.")
     String name,
@@ -12,5 +14,7 @@ public record CreateActivityRequestDTO(
     Long groupId,
 
     @Size(max = 5000, message = "A descrição não pode exceder 5000 caracteres")
-    String description
+    String description,
+
+    LocalDate dueDate
 ) {}

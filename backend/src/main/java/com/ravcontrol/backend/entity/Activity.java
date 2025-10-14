@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "activities")
@@ -89,7 +90,7 @@ public class Activity {
         return group;
     }
 
-    protected void setPosition(Integer position) {
+    public void setPosition(Integer position) {
         this.position = position;
     }
 
@@ -109,12 +110,25 @@ public class Activity {
         this.completed = completed;
     }
 
-    protected void setGroup(ActivityGroup group) {
+    public void setGroup(ActivityGroup group) {
         this.group = group;
     }
 
     public void attachToGroup(ActivityGroup group, int position) {
         this.group = group;
         this.position = position;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Activity activity = (Activity) o;
+        return Objects.equals(id, activity.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
