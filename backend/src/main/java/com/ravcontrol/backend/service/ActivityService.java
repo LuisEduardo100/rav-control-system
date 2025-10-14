@@ -42,6 +42,7 @@ public class ActivityService {
         Activity newActivity = new Activity();
         newActivity.setName(dto.name());
         newActivity.setDescription(dto.description());
+        newActivity.setDueDate(dto.dueDate());
         newActivity.attachToGroup(group, nextPosition);
 
         Activity savedActivity = activityRepository.save(newActivity);
@@ -73,18 +74,30 @@ public class ActivityService {
 
     @Transactional
     public ActivityResponseDTO moveActivity(Long activityId, MoveActivityRequestDTO dto) {
-        Activity activity = activityRepository
-            .findById(activityId)
-            .orElseThrow(() -> new ResourceNotFoundException("Atividade não encontrada para o ID" + activityId));
+        Activity activity = activityRepository.findById(activityId)
+            .orElseThrow(() -> new ResourceNotFoundException("Atividade não encontrada com o ID " + activityId));
 
-        ActivityGroup targetGroup = groupRepository
-            .findById(dto.targetGroupId())
-            .orElseThrow(() -> new ResourceNotFoundException("Grupo de destino não encontrado com o ID: " + dto.targetGroupId()));
+        ActivityGroup targetGroup = groupRepository.findById(dto.targetGroupId())
+            .orElseThrow(() -> new ResourceNotFoundException("Grupo de destino não encontrado com o ID " + dto.targetGroupId()));
 
-        activity.attachToGroup(targetGroup, dto.newPosition());
+        ActivityGroup sourceGroup = activity.getGroup();
 
-        Activity movedActivity = activityRepository.save(activity);
-        return ActivityResponseDTO.fromEntity(movedActivity);
+        if (activity.getGroup().equals(targetGroup)
+            && activity.getPosition().equals(dto.newPosition()
+        )) {
+            return ActivityResponseDTO.fromEntity(activity);
+        }
+
+        sourceGroup.removeActivity(activity);
+        targetGroup.addActivity(activity, dto.newPosition());
+
+        reorderPositions(sourceGroup.getActivities());
+        reorderPositions(targetGroup.getActivities());
+
+        groupRepository.saveAll(List.of(sourceGroup, targetGroup));
+        activityRepository.save(activity);
+
+        return ActivityResponseDTO.fromEntity(activity);
     }
 
     @Transactional
@@ -92,7 +105,19 @@ public class ActivityService {
         if( !activityRepository.existsById(activityId)) {
             throw new ResourceNotFoundException("Atividade não encontrada para o ID: " + activityId);
         }
-        activityRepository.deleteById(activityId);
+
+        Activity activityToDelete = activityRepository
+            .findById(activityId)
+            .orElseThrow(() -> new ResourceNotFoundException("Atividade não encontrada com o ID: " + activityId));
+
+        ActivityGroup group = activityToDelete.getGroup();
+        List<Activity> activitiesInGroup = group.getActivities();
+
+        activitiesInGroup.remove(activityToDelete);
+        activityRepository.delete(activityToDelete);
+
+        reorderPositions(activitiesInGroup);
+        groupRepository.save(group);
     }
 
     @Transactional(readOnly = true)
@@ -116,6 +141,12 @@ public class ActivityService {
     public OverdueCountDTO getOverdueActivitiesCount() {
         int count = activityRepository.countByDueDateBeforeAndCompletedIsFalse(LocalDate.now());
         return new OverdueCountDTO(count);
+    }
+
+    private void reorderPositions(List<Activity> activities) {
+        for (int i = 0; i < activities.size(); i++) {
+            activities.get(i).setPosition(i);
+        }
     }
 }
 

@@ -50,5 +50,4 @@ public class ActivityGroupController {
         groupService.deleteGroup(groupId);
         return ResponseEntity.noContent().build();
     }
-
 }
