@@ -62,7 +62,7 @@ public class ActivityController {
         return ResponseEntity.ok(count);
     }
 
-    @DeleteMapping("/{activityId")
+    @DeleteMapping("/{activityId}")
     public ResponseEntity<Void> deleteActivity(
         @PathVariable Long activityId
     ) {
