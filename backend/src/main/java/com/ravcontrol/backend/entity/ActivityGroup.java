@@ -15,6 +15,9 @@ public class ActivityGroup {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private Integer position = 0;
+
     @Column(
         name = "created_at",
         nullable = false,
@@ -65,6 +68,14 @@ public class ActivityGroup {
 
     public List<Activity> getActivities() {
         return activities;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 
     public void addActivity(Activity activity, int position) {

@@ -2,6 +2,7 @@ package com.ravcontrol.backend.service;
 
 import com.ravcontrol.backend.dto.activityGroup.request.ActivityGroupRequestDTO;
 import com.ravcontrol.backend.dto.activityGroup.response.ActivityGroupResponseDTO;
+import com.ravcontrol.backend.entity.Activity;
 import com.ravcontrol.backend.entity.ActivityGroup;
 import com.ravcontrol.backend.repository.ActivityGroupRepository;
 import com.ravcontrol.backend.service.exception.ResourceNotFoundException;
@@ -23,7 +24,7 @@ public class ActivityGroupService {
 
     @Transactional(readOnly = true)
     public List<ActivityGroupResponseDTO> findAllGroups() {
-        List<ActivityGroup> groups = groupRepository.findAll();
+        List<ActivityGroup> groups = groupRepository.findAllByOrderByPositionAsc();
         return groups
             .stream()
             .map(ActivityGroupResponseDTO::fromEntity) // method reference que substitui o método lambda
@@ -32,8 +33,12 @@ public class ActivityGroupService {
 
     @Transactional
     public ActivityGroupResponseDTO createGroup(ActivityGroupRequestDTO dto) {
+        long nextPosition = groupRepository.count();
+
         ActivityGroup newGroup = new ActivityGroup();
         newGroup.setName(dto.name());
+        newGroup.setPosition((int) nextPosition);
+
         ActivityGroup savedGroup = groupRepository.save(newGroup);
         return ActivityGroupResponseDTO.fromEntity(savedGroup);
     }
@@ -55,6 +60,17 @@ public class ActivityGroupService {
         if (!groupRepository.existsById(groupId)) {
             throw new ResourceNotFoundException("Grupo não encontrado para o ID" + groupId);
         }
+
         groupRepository.deleteById(groupId);
+
+        List<ActivityGroup> remainingGroups = groupRepository.findAllByOrderByPositionAsc();
+        reorderPositions(remainingGroups);
+        groupRepository.saveAll(remainingGroups);
+    }
+
+    private void reorderPositions(List<ActivityGroup> groups) {
+        for (int i = 0; i < groups.size(); i++) {
+            groups.get(i).setPosition(i);
+        }
     }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 public record ActivityGroupResponseDTO(
     Long id,
     String name,
+    Integer position,
     List<ActivityResponseDTO> activities
 ) {
     public static ActivityGroupResponseDTO fromEntity(ActivityGroup group) {
@@ -22,6 +23,7 @@ public record ActivityGroupResponseDTO(
         return new ActivityGroupResponseDTO(
             group.getId(),
             group.getName(),
+            group.getPosition(),
             activityDtos
         );
     }
