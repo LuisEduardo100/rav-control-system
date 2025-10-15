@@ -1,32 +1,79 @@
-// src/components/GroupColumn.tsx
 import { SortableContext } from '@dnd-kit/sortable';
 import ActivityCard from './ActivityCard';
-import type { ActivityType } from '../types/activityType';
-
-type Group = {
-  id: number;
-  name: string;
-  activities: ActivityType[];
-};
+import type { GroupType } from '../types/groupType';
+import { useGroupStore } from '../store/useGroupStore';
+import { useState } from 'react';
+import { useDroppable } from '@dnd-kit/core';
 
 interface GroupColumnProps {
-  group: Group;
+  group: GroupType;
 }
 
 export default function GroupColumn({ group }: GroupColumnProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [groupName, setGroupName] = useState(group.name);
+  const { updateGroup } = useGroupStore();
+
+  const { setNodeRef } = useDroppable({
+    id: group.id,
+    data: {
+      type: 'GROUP',
+    },
+  });
+
+  const handleUpdate = () => {
+    if (!groupName.trim() || groupName === group.name) {
+      setIsEditing(false);
+      setGroupName(group.name);
+      return;
+    }
+    updateGroup(group.id, groupName.trim());
+    setIsEditing(false);
+  };
+
   return (
-    <div className="w-64 bg-gray-800 rounded-xl p-4">
-      <h3 className="text-lg font-semibold mb-2">{group.name}</h3>
-      <SortableContext items={group.activities.map((a) => a.id)}>
-        {group.activities.map((activity, index) => (
-          <ActivityCard
-            key={activity.id}
-            activity={activity}
-            groupId={group.id}
-            index={index}
+    <div
+      ref={setNodeRef}
+      className="flex w-72 flex-shrink-0 flex-col rounded-lg bg-stone-200 shadow-md"
+    >
+      <div className="rounded-t-lg bg-blue-600 p-3 text-white">
+        {isEditing ? (
+          <input
+            autoFocus
+            value={groupName}
+            onChange={(e) => setGroupName(e.target.value)}
+            onBlur={handleUpdate}
+            onKeyDown={(e) => e.key === 'Enter' && handleUpdate()}
+            className="w-full rounded border-none bg-blue-700 p-0 font-semibold text-white outline-none"
           />
-        ))}
-      </SortableContext>
+        ) : (
+          <h3
+            onClick={() => setIsEditing(true)}
+            className="font-semibold cursor-pointer"
+          >
+            {group.name}
+          </h3>
+        )}
+      </div>
+
+      <div className="flex-grow p-3">
+        <SortableContext items={group.activities.map((a) => a.id)}>
+          {group.activities.map((activity, index) => (
+            <ActivityCard
+              key={activity.id}
+              activity={activity}
+              groupId={group.id}
+              index={index}
+            />
+          ))}
+        </SortableContext>
+      </div>
+
+      <div className="p-3">
+        <button className="w-full rounded-md p-2 text-left text-sm text-gray-500 hover:bg-gray-300">
+          + Novo Card
+        </button>
+      </div>
     </div>
   );
 }
