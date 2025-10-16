@@ -1,19 +1,14 @@
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useBoardStore } from '../store/useBoardStore';
 import { useActivityStore } from '../store/useActivityStore';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useEffect } from 'react';
 import { Newspaper, Pencil } from 'lucide-react';
-import { requiredNameSchema } from '../validation/commonSchemas';
-
-const activitySchema = requiredNameSchema.extend({
-  description: z.string().optional(),
-  dueDate: z.string().optional(),
-  completed: z.boolean().optional(),
-});
-type ActivityFormData = z.infer<typeof activitySchema>;
+import {
+  activitySchema,
+  type ActivityFormData,
+} from '../validation/commonSchemas';
 
 export default function ActivityFormModal() {
   const {

@@ -140,14 +140,17 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   deleteActivity: async (activityId, groupId) => {
     const previousGroups = get().groups;
     set((state) => ({
-      groups: state.groups.map((g) =>
-        g.id === groupId
-          ? {
-              ...g,
-              activities: g.activities.filter((a) => a.id !== activityId),
-            }
-          : g
-      ),
+      groups: state.groups.map((group) => {
+        if (group.id === groupId) {
+          return {
+            ...group,
+            activities: group.activities.filter(
+              (activity) => activity.id !== activityId
+            ),
+          };
+        }
+        return group;
+      }),
     }));
 
     try {
