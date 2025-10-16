@@ -136,7 +136,10 @@ export default function Board() {
         setOverGroupId(null);
       }}
     >
-      <div ref={scrollRef} className="flex gap-6 overflow-x-auto p-4">
+      <div
+        ref={scrollRef}
+        className="flex h-full items-start gap-10 overflow-x-auto px-4"
+      >
         {groups.map((group) => (
           <GroupColumn
             key={group.id}
