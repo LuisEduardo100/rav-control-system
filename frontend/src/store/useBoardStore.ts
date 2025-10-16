@@ -1,12 +1,19 @@
-// src/store/useBoardStore.ts
 import { create } from 'zustand';
+import { arrayMove } from '@dnd-kit/sortable';
 import type { GroupType } from '../types/groupType';
 import { api } from '../services/api';
+
+interface MoveActivityPayload {
+  targetGroupId: number;
+  newPosition: number;
+}
 
 interface BoardStore {
   groups: GroupType[];
   fetchGroups: () => Promise<void>;
   createGroup: (name: string) => Promise<void>;
+  updateGroup: (id: number, name: string) => Promise<void>;
+  deleteGroup: (id: number) => Promise<void>;
   moveActivity: (
     activityId: number,
     sourceGroupId: number,
@@ -17,31 +24,48 @@ interface BoardStore {
   persistActivityMove: (
     activityId: number,
     payload: MoveActivityPayload
-  ) => void;
-}
-
-interface MoveActivityPayload {
-  targetGroupId: number;
-  newPosition: number;
+  ) => Promise<void>;
 }
 
 export const useBoardStore = create<BoardStore>((set) => ({
   groups: [],
 
   fetchGroups: async () => {
-    const { data } = await api.get<GroupType[]>('/groups');
+    try {
+      const { data } = await api.get<GroupType[]>('/groups');
 
-    const sortedGroups = data.sort((a, b) => a.position - b.position);
-    sortedGroups.forEach((group) => {
-      group.activities.sort((a, b) => a.position - b.position);
-    });
+      const sortedGroups = [...data].sort((a, b) => a.position - b.position);
 
-    set({ groups: sortedGroups });
+      const groupsWithSortedActivities = sortedGroups.map((group) => ({
+        ...group,
+        activities: [...group.activities].sort(
+          (a, b) => a.position - b.position
+        ),
+      }));
+
+      set({ groups: groupsWithSortedActivities });
+    } catch (error) {
+      console.error('Falha ao buscar os grupos.', error);
+    }
   },
 
   createGroup: async (name) => {
     const { data } = await api.post<GroupType>('/groups', { name });
     set((state) => ({ groups: [...state.groups, data] }));
+  },
+
+  updateGroup: async (id, name) => {
+    const { data } = await api.put<GroupType>(`/groups/${id}`, { name });
+    set((state) => ({
+      groups: state.groups.map((g) => (g.id === id ? { ...g, ...data } : g)),
+    }));
+  },
+
+  deleteGroup: async (id) => {
+    await api.delete(`/groups/${id}`);
+    set((state) => ({
+      groups: state.groups.filter((g) => g.id !== id),
+    }));
   },
 
   moveActivity: (
@@ -57,23 +81,29 @@ export const useBoardStore = create<BoardStore>((set) => ({
         activities: [...g.activities],
       }));
 
-      const sourceGroup = newGroups.find((g) => g.id === sourceGroupId)!;
-      const targetGroup = newGroups.find((g) => g.id === targetGroupId)!;
+      const sourceGroup = newGroups.find((g) => g.id === sourceGroupId);
+      const targetGroup = newGroups.find((g) => g.id === targetGroupId);
 
-      // Remove a atividade do grupo de origem
-      const [movedActivity] = sourceGroup.activities.splice(sourceIndex, 1);
+      if (!sourceGroup || !targetGroup) {
+        return { groups: state.groups };
+      }
 
-      // Adiciona a atividade no grupo de destino na posição correta
-      targetGroup.activities.splice(targetIndex, 0, movedActivity);
+      if (sourceGroupId === targetGroupId) {
+        targetGroup.activities = arrayMove(
+          sourceGroup.activities,
+          sourceIndex,
+          targetIndex
+        );
+      } else {
+        const [movedActivity] = sourceGroup.activities.splice(sourceIndex, 1);
+        targetGroup.activities.splice(targetIndex, 0, movedActivity);
+      }
 
       return { groups: newGroups };
     });
   },
 
-  persistActivityMove: async (
-    activityId: number,
-    payload: MoveActivityPayload
-  ) => {
+  persistActivityMove: async (activityId, payload) => {
     try {
       await api.patch(`/activities/${activityId}/move`, payload);
     } catch (error) {

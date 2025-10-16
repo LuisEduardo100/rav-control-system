@@ -7,8 +7,11 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
+import type {
+  DragEndEvent,
+  DragOverEvent,
+  DragStartEvent,
+} from '@dnd-kit/core';
 import { useBoardStore } from '../store/useBoardStore';
 import GroupColumn from './GroupColumn';
 import AddGroupButton from './AddGroupButton';
@@ -22,6 +25,8 @@ export default function Board() {
   const [activeActivity, setActiveActivity] = useState<ActivityType | null>(
     null
   );
+  const [overGroupId, setOverGroupId] = useState<number | null>(null);
+
   const scrollRef = useHorizontalScroll();
 
   const sensors = useSensors(
@@ -46,38 +51,81 @@ export default function Board() {
     }
   };
 
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
+
+    const isOverAGroup = over.data.current?.type === 'GROUP';
+    const isOverAnActivity = over.data.current?.type === 'ACTIVITY';
+
+    if (isOverAGroup) {
+      const groupId = Number(String(over.id).replace('group-', ''));
+      setOverGroupId(groupId);
+    } else if (isOverAnActivity) {
+      const groupId = over.data.current?.groupId;
+      setOverGroupId(groupId);
+    }
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveActivity(null);
+    setOverGroupId(null);
     const { active, over } = event;
 
     if (!over || active.id === over.id) return;
 
     const sourceGroupId = active.data.current?.groupId;
-    const targetGroupId = over.data.current?.groupId || over.id;
-
-    const sourceGroup = groups.find((g) => g.id === Number(sourceGroupId));
-    const targetGroup = groups.find((g) => g.id === Number(targetGroupId));
-    if (!sourceGroup || !targetGroup) return;
+    const sourceGroup = groups.find((g) => g.id === sourceGroupId);
+    if (!sourceGroup) return;
 
     const sourceIndex = sourceGroup.activities.findIndex(
       (a) => a.id === active.id
     );
-    let targetIndex = targetGroup.activities.findIndex((a) => a.id === over.id);
 
-    if (targetIndex === -1) {
+    const isOverAGroup = over.data.current?.type === 'GROUP';
+    const isOverAnActivity = over.data.current?.type === 'ACTIVITY';
+
+    let targetGroupId: number;
+    let targetIndex: number;
+
+    if (isOverAGroup) {
+      targetGroupId = Number(String(over.id).replace('group-', ''));
+
+      const targetGroup = groups.find((g) => g.id === targetGroupId);
+      if (!targetGroup) return;
       targetIndex = targetGroup.activities.length;
+    } else if (isOverAnActivity) {
+      targetGroupId = over.data.current?.groupId;
+
+      const targetGroup = groups.find((g) => g.id === targetGroupId);
+      if (!targetGroup) return;
+      targetIndex = targetGroup.activities.findIndex((a) => a.id === over.id);
+    } else {
+      return;
+    }
+
+    if (sourceIndex === -1 || targetIndex === -1) {
+      console.error(
+        'Não foi possível encontrar o índice de origem ou destino.'
+      );
+      return;
     }
 
     moveActivity(
       Number(active.id),
-      Number(sourceGroupId),
-      Number(targetGroupId),
+      sourceGroupId,
+      targetGroupId,
       sourceIndex,
       targetIndex
     );
 
     persistActivityMove(Number(active.id), {
-      targetGroupId: Number(targetGroupId),
+      targetGroupId,
       newPosition: targetIndex,
     });
   };
@@ -88,24 +136,27 @@ export default function Board() {
       collisionDetection={closestCorners}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      onDragCancel={() => setActiveActivity(null)}
+      onDragOver={handleDragOver}
+      onDragCancel={() => {
+        setActiveActivity(null);
+        setOverGroupId(null);
+      }}
     >
       <div ref={scrollRef} className="flex gap-6 overflow-x-auto p-4">
         {groups.map((group) => (
-          <SortableContext
+          <GroupColumn
             key={group.id}
-            items={group.activities.map((a) => a.id)}
-            strategy={rectSortingStrategy}
-          >
-            <GroupColumn group={group} />
-          </SortableContext>
+            group={group}
+            activeActivity={activeActivity}
+            overGroupId={overGroupId}
+          />
         ))}
         <AddGroupButton />
       </div>
 
       <DragOverlay>
         {activeActivity ? (
-          <ActivityCard activity={activeActivity} groupId={0} index={0} />
+          <ActivityCard activity={activeActivity} groupId={0} />
         ) : null}
       </DragOverlay>
     </DndContext>

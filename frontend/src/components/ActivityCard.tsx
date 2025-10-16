@@ -5,14 +5,10 @@ import type { ActivityType } from '../types/activityType';
 interface ActivityCardProps {
   activity: ActivityType;
   groupId: number;
-  index: number;
 }
 
-export default function ActivityCard({
-  activity,
-  groupId,
-  index,
-}: ActivityCardProps) {
+export default function ActivityCard({ activity, groupId }: ActivityCardProps) {
+  console.log(`Renderizando ActivityCard ID: ${activity.id}`, { groupId });
   const {
     attributes,
     listeners,
@@ -22,7 +18,11 @@ export default function ActivityCard({
     isDragging,
   } = useSortable({
     id: activity.id,
-    data: { groupId, index },
+    data: {
+      type: 'ACTIVITY',
+      activity,
+      groupId,
+    },
   });
 
   const style = {
@@ -36,9 +36,14 @@ export default function ActivityCard({
       {...attributes}
       {...listeners}
       style={style}
-      className={`p-3 bg-gray-700 rounded-md mb-2 cursor-grab active:cursor-grabbing ${
-        isDragging ? 'shadow-2xl' : 'shadow-sm'
-      }`}
+      className={`
+        mb-3 rounded-lg bg-[#101828] p-3 shadow
+        ${
+          isDragging
+            ? 'cursor-grabbing opacity-50'
+            : 'cursor-grab active:cursor-grabbing '
+        }
+      `}
     >
       {activity.name}
     </div>

@@ -1,25 +1,47 @@
 import { SortableContext } from '@dnd-kit/sortable';
 import ActivityCard from './ActivityCard';
 import type { GroupType } from '../types/groupType';
-import { useGroupStore } from '../store/useGroupStore';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
+import { useBoardStore } from '../store/useBoardStore';
+import type { ActivityType } from '../types/activityType';
 
 interface GroupColumnProps {
   group: GroupType;
+  activeActivity: ActivityType | null;
+  overGroupId: number | null;
 }
 
-export default function GroupColumn({ group }: GroupColumnProps) {
+export default function GroupColumn({
+  group,
+  activeActivity,
+  overGroupId,
+}: GroupColumnProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [groupName, setGroupName] = useState(group.name);
-  const { updateGroup } = useGroupStore();
+  const { updateGroup } = useBoardStore();
 
   const { setNodeRef } = useDroppable({
-    id: group.id,
+    id: `group-${group.id}`,
     data: {
       type: 'GROUP',
+      group,
     },
   });
+
+  const activityIds = useMemo(() => {
+    const ids = group.activities.map((a) => a.id);
+
+    if (
+      overGroupId === group.id &&
+      activeActivity &&
+      !ids.includes(activeActivity.id)
+    ) {
+      return [...ids, activeActivity.id];
+    }
+
+    return ids;
+  }, [group.activities, activeActivity, overGroupId, group.id]);
 
   const handleUpdate = () => {
     if (!groupName.trim() || groupName === group.name) {
@@ -57,13 +79,12 @@ export default function GroupColumn({ group }: GroupColumnProps) {
       </div>
 
       <div className="flex-grow p-3">
-        <SortableContext items={group.activities.map((a) => a.id)}>
-          {group.activities.map((activity, index) => (
+        <SortableContext items={activityIds}>
+          {group.activities.map((activity) => (
             <ActivityCard
               key={activity.id}
               activity={activity}
               groupId={group.id}
-              index={index}
             />
           ))}
         </SortableContext>
