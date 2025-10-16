@@ -81,13 +81,13 @@ export default function ActivityCard({ activity, groupId }: ActivityCardProps) {
         }
       `}
     >
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-center">
         <p className="flex-grow pr-2">{activity.name}</p>
         <button
           onClick={handleDelete}
-          className="flex-shrink-0 text-gray-400 hover:text-red-600"
+          className="flex-shrink-0 text-gray-400 hover:text-red-600 cursor-pointer"
         >
-          <Trash2 size={16} />
+          <Trash2 size={18} />
         </button>
       </div>
       {activity.dueDate && (

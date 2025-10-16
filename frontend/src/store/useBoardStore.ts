@@ -17,7 +17,6 @@ interface BoardStore {
   updateGroup: (id: number, name: string) => Promise<void>;
   deleteGroup: (id: number) => Promise<void>;
   moveActivity: (
-    activityId: number,
     sourceGroupId: number,
     targetGroupId: number,
     sourceIndex: number,

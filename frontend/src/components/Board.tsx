@@ -116,13 +116,7 @@ export default function Board() {
       return;
     }
 
-    moveActivity(
-      Number(active.id),
-      sourceGroupId,
-      targetGroupId,
-      sourceIndex,
-      targetIndex
-    );
+    moveActivity(sourceGroupId, targetGroupId, sourceIndex, targetIndex);
 
     persistActivityMove(Number(active.id), {
       targetGroupId,
