@@ -1,20 +1,34 @@
 import { useState } from 'react';
 import { useBoardStore } from '../store/useBoardStore';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  requiredNameSchema,
+  type RequiredNameFormData,
+} from '../validation/commonSchemas';
 
 export default function AddGroupButton() {
   const [isAdding, setIsAdding] = useState(false);
-  const [name, setName] = useState('');
   const { createGroup } = useBoardStore();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!name.trim()) {
-      setIsAdding(false);
-      return;
-    }
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<RequiredNameFormData>({
+    resolver: zodResolver(requiredNameSchema),
+    defaultValues: { name: '' },
+  });
 
-    await createGroup(name.trim());
-    setName('');
+  const onAddNewGroup = async (data: RequiredNameFormData) => {
+    await createGroup(data.name.trim());
+    reset({ name: '' });
+    setIsAdding(false);
+  };
+
+  const cancelAdding = () => {
+    reset({ name: '' });
     setIsAdding(false);
   };
 
@@ -23,16 +37,26 @@ export default function AddGroupButton() {
 
   if (isAdding) {
     return (
-      <form onSubmit={handleSubmit} className={`${baseStyle} bg-stone-200`}>
+      <form
+        onSubmit={handleSubmit(onAddNewGroup)}
+        className={`${baseStyle} bg-stone-200`}
+      >
         <input
+          {...register('name')}
           autoFocus
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onBlur={() => setIsAdding(false)}
+          onBlur={cancelAdding}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              cancelAdding();
+            }
+          }}
           placeholder="Nome do novo grupo..."
-          className="w-full rounded-md border-2 border-blue-500 bg-white p-2 text-sm shadow-sm outline-none text-black placeholder:text-black"
+          className="w-full rounded-md border-none bg-white focus:outline-none p-2 text-sm text-black shadow-sm  placeholder:text-black"
         />
+        {errors.name && (
+          <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>
+        )}
       </form>
     );
   }
@@ -40,9 +64,9 @@ export default function AddGroupButton() {
   return (
     <button
       onClick={() => setIsAdding(true)}
-      className={`${baseStyle} bg-stone-200/50 text-stone-600 hover:bg-stone-200/80`}
+      className={`${baseStyle} bg-stone-200/80 text-stone-700 hover:bg-stone-200/70`}
     >
-      + Novo Grupo
+      Novo Grupo +
     </button>
   );
 }

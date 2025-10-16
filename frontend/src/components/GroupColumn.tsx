@@ -1,12 +1,18 @@
 import { SortableContext } from '@dnd-kit/sortable';
 import ActivityCard from './ActivityCard';
 import type { GroupType } from '../types/groupType';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { useBoardStore } from '../store/useBoardStore';
 import type { ActivityType } from '../types/activityType';
 import { CirclePlus, Trash2 } from 'lucide-react';
 import { useActivityStore } from '../store/useActivityStore';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  requiredNameSchema,
+  type RequiredNameFormData,
+} from '../validation/commonSchemas';
 
 interface GroupColumnProps {
   group: GroupType;
@@ -20,7 +26,6 @@ export default function GroupColumn({
   overGroupId,
 }: GroupColumnProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [groupName, setGroupName] = useState(group.name);
   const { updateGroup, deleteGroup } = useBoardStore();
   const { openCreateActivityModal } = useActivityStore();
 
@@ -31,6 +36,22 @@ export default function GroupColumn({
       group,
     },
   });
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty },
+  } = useForm<RequiredNameFormData>({
+    resolver: zodResolver(requiredNameSchema),
+    defaultValues: {
+      name: group.name,
+    },
+  });
+
+  useEffect(() => {
+    reset({ name: group.name });
+  }, [group.name, reset]);
 
   const activityIds = useMemo(() => {
     const ids = group.activities.map((a) => a.id);
@@ -46,13 +67,12 @@ export default function GroupColumn({
     return ids;
   }, [group.activities, activeActivity, overGroupId, group.id]);
 
-  const handleUpdate = () => {
-    if (!groupName.trim() || groupName === group.name) {
+  const onTitleSubmit = (data: RequiredNameFormData) => {
+    if (!isDirty || data.name === group.name) {
       setIsEditing(false);
-      setGroupName(group.name);
       return;
     }
-    updateGroup(group.id, groupName.trim());
+    updateGroup(group.id, data.name.trim());
     setIsEditing(false);
   };
 
@@ -73,14 +93,23 @@ export default function GroupColumn({
     >
       <div className="flex items-center justify-between rounded-t-lg bg-blue-600 p-3 text-white">
         {isEditing ? (
-          <input
-            autoFocus
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
-            onBlur={handleUpdate}
-            onKeyDown={(e) => e.key === 'Enter' && handleUpdate()}
-            className="w-full rounded border-none bg-blue-700 p-0 font-semibold text-white outline-none"
-          />
+          <form onSubmit={handleSubmit(onTitleSubmit)} className="flex-grow">
+            <input
+              {...register('name')}
+              autoFocus
+              className="w-full rounded border-none bg-blue-700 p-0 font-semibold text-white outline-none"
+              onBlur={handleSubmit(onTitleSubmit)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  reset({ name: group.name });
+                  setIsEditing(false);
+                }
+              }}
+            />
+            {errors.name && (
+              <p className="mt-1 text-xs text-red-300">{errors.name.message}</p>
+            )}
+          </form>
         ) : (
           <h3
             onClick={() => setIsEditing(true)}
@@ -89,13 +118,15 @@ export default function GroupColumn({
             {group.name}
           </h3>
         )}
-        <button
-          onClick={handleDeleteGroup}
-          className="rounded p-1 opacity-60 hover:opacity-100 cursor-pointer"
-          aria-label={`Excluir grupo ${group.name}`}
-        >
-          <Trash2 size={16} />
-        </button>
+        {!isEditing && (
+          <button
+            onClick={handleDeleteGroup}
+            className="ml-2 rounded p-1 opacity-60 hover:text-red-600 hover:opacity-100 cursor-pointer"
+            aria-label={`Excluir grupo ${group.name}`}
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
       </div>
 
       <div className="flex-grow p-3">

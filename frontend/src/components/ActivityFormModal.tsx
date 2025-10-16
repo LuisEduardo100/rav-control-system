@@ -6,14 +6,13 @@ import { useActivityStore } from '../store/useActivityStore';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useEffect } from 'react';
 import { Newspaper, Pencil } from 'lucide-react';
+import { requiredNameSchema } from '../validation/commonSchemas';
 
-const activitySchema = z.object({
-  name: z.string().min(1, { message: 'O nome da atividade é obrigatório.' }),
+const activitySchema = requiredNameSchema.extend({
   description: z.string().optional(),
   dueDate: z.string().optional(),
   completed: z.boolean().optional(),
 });
-
 type ActivityFormData = z.infer<typeof activitySchema>;
 
 export default function ActivityFormModal() {
