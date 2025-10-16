@@ -102,22 +102,14 @@ public class ActivityService {
 
     @Transactional
     public void deleteActivity(Long activityId) {
-        if( !activityRepository.existsById(activityId)) {
-            throw new ResourceNotFoundException("Atividade não encontrada para o ID: " + activityId);
-        }
-
-        Activity activityToDelete = activityRepository
-            .findById(activityId)
+        Activity activityToDelete = activityRepository.findById(activityId)
             .orElseThrow(() -> new ResourceNotFoundException("Atividade não encontrada com o ID: " + activityId));
 
         ActivityGroup group = activityToDelete.getGroup();
-        List<Activity> activitiesInGroup = group.getActivities();
+        group.getActivities().remove(activityToDelete);
+        reorderPositions(group.getActivities());
 
-        activitiesInGroup.remove(activityToDelete);
         activityRepository.delete(activityToDelete);
-
-        reorderPositions(activitiesInGroup);
-        groupRepository.save(group);
     }
 
     @Transactional(readOnly = true)
