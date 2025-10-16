@@ -1,3 +1,4 @@
+import ActivityFormModal from '../components/ActivityFormModal';
 import Board from '../components/Board';
 
 export default function KanbanPage() {
@@ -13,6 +14,7 @@ export default function KanbanPage() {
       <section>
         <Board />
       </section>
+      <ActivityFormModal />
     </div>
   );
 }

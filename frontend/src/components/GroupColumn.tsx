@@ -5,7 +5,8 @@ import { useMemo, useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { useBoardStore } from '../store/useBoardStore';
 import type { ActivityType } from '../types/activityType';
-import { Trash2 } from 'lucide-react';
+import { CirclePlus, Trash2 } from 'lucide-react';
+import { useActivityStore } from '../store/useActivityStore';
 
 interface GroupColumnProps {
   group: GroupType;
@@ -21,6 +22,7 @@ export default function GroupColumn({
   const [isEditing, setIsEditing] = useState(false);
   const [groupName, setGroupName] = useState(group.name);
   const { updateGroup, deleteGroup } = useBoardStore();
+  const { openCreateActivityModal } = useActivityStore();
 
   const { setNodeRef } = useDroppable({
     id: `group-${group.id}`,
@@ -108,9 +110,12 @@ export default function GroupColumn({
         </SortableContext>
       </div>
 
-      <div className="p-3">
-        <button className="w-full rounded-md p-2 text-left text-sm text-gray-500 hover:bg-gray-300">
-          + Novo Card
+      <div className="mx-auto p-3">
+        <button
+          onClick={() => openCreateActivityModal(group.id)}
+          className="rounded-md p-2 text-center text-sm text-gray-500 hover:bg-gray-300 cursor-pointer"
+        >
+          <CirclePlus size={24} />
         </button>
       </div>
     </div>
