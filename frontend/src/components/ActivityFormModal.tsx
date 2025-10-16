@@ -55,6 +55,7 @@ export default function ActivityFormModal() {
         name: payload.name,
         groupId: targetGroupIdForNewActivity,
         description: payload.description,
+        dueDate: payload.dueDate,
       });
     }
   };
@@ -135,6 +136,11 @@ export default function ActivityFormModal() {
                   id="dueDate"
                   className="cursor-text mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm"
                 />
+                {errors.dueDate && (
+                  <p className="mt-1 text-sm text-red-600">
+                    {errors.dueDate.message}
+                  </p>
+                )}
               </div>
 
               {editingActivity && (

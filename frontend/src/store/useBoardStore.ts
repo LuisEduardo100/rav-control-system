@@ -45,9 +45,12 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
 
       const groupsWithSortedActivities = sortedGroups.map((group) => ({
         ...group,
-        activities: [...group.activities].sort(
-          (a, b) => a.position - b.position
-        ),
+        activities: [...group.activities]
+          .sort((a, b) => a.position - b.position)
+          .map((activity) => ({
+            ...activity,
+            groupId: group.id,
+          })),
       }));
 
       set({ groups: groupsWithSortedActivities });
@@ -137,8 +140,16 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     }
   },
 
-  deleteActivity: async (activityId, groupId) => {
+  deleteActivity: async (activityId: number, groupId: number) => {
+    if (!activityId || !groupId) {
+      console.error('Tentativa de deletar com IDs inválidos:', {
+        activityId,
+        groupId,
+      });
+      return;
+    }
     const previousGroups = get().groups;
+
     set((state) => ({
       groups: state.groups.map((group) => {
         if (group.id === groupId) {

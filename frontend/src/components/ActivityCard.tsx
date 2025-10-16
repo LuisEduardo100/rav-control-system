@@ -3,7 +3,7 @@ import { CSS } from '@dnd-kit/utilities';
 import type { ActivityType } from '../types/activityType';
 import { isPast, parseISO } from 'date-fns';
 import { useBoardStore } from '../store/useBoardStore';
-import { Calendar, Trash2 } from 'lucide-react';
+import { Clock, Trash2 } from 'lucide-react';
 import { useActivityStore } from '../store/useActivityStore';
 import { formatDueDate } from '../utils/dateUtils';
 
@@ -36,6 +36,8 @@ export default function ActivityCard({ activity, groupId }: ActivityCardProps) {
     activity.dueDate &&
     isPast(parseISO(activity.dueDate)) &&
     !activity.completed;
+
+  const hasStatusInfo = activity.dueDate || activity.completed;
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -90,20 +92,33 @@ export default function ActivityCard({ activity, groupId }: ActivityCardProps) {
           <Trash2 size={18} />
         </button>
       </div>
-      {activity.dueDate && (
-        <div
-          className={`mt-2 flex items-center gap-2 text-sm ${
-            isOverdue ? 'text-red-600 font-semibold' : 'text-gray-500'
-          }`}
-        >
-          <Calendar size={14} />
-          <span>{formatDueDate(activity.dueDate)}</span>
+      {hasStatusInfo && (
+        <div className="mt-2 flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            {activity.completed && (
+              <span className="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">
+                Concluído
+              </span>
+            )}
+
+            {activity.dueDate && (
+              <div
+                className={`flex items-center gap-1 ${
+                  isOverdue ? 'text-red-400 font-semibold' : 'text-gray-400'
+                }`}
+              >
+                <Clock size={14} />
+                <span>{formatDueDate(activity.dueDate)}</span>
+              </div>
+            )}
+          </div>
+
           <input
             type="checkbox"
             checked={activity.completed}
             onChange={handleToggleCompletion}
             onClick={(e) => e.stopPropagation()}
-            className="ml-auto"
+            className="ml-auto cursor-pointer h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-600 focus:ring-blue-500"
           />
         </div>
       )}

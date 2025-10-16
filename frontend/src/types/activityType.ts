@@ -21,6 +21,7 @@ export interface CreateActivityRequestDTO {
   name: string;
   groupId: number;
   description?: string;
+  dueDate?: string | null;
 }
 
 export interface UpdateActivityRequestDTO {
