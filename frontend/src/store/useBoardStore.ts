@@ -27,7 +27,7 @@ interface BoardStore {
   ) => Promise<void>;
 }
 
-export const useBoardStore = create<BoardStore>((set) => ({
+export const useBoardStore = create<BoardStore>((set, get) => ({
   groups: [],
 
   fetchGroups: async () => {
@@ -55,10 +55,18 @@ export const useBoardStore = create<BoardStore>((set) => ({
   },
 
   updateGroup: async (id, name) => {
-    const { data } = await api.put<GroupType>(`/groups/${id}`, { name });
+    const previousGroups = get().groups;
+
     set((state) => ({
-      groups: state.groups.map((g) => (g.id === id ? { ...g, ...data } : g)),
+      groups: state.groups.map((g) => (g.id === id ? { ...g, name: name } : g)),
     }));
+
+    try {
+      await api.put<GroupType>(`/groups/${id}`, { name });
+    } catch (error) {
+      console.error('Falha ao atualizar o grupo.', error);
+      set({ groups: previousGroups });
+    }
   },
 
   deleteGroup: async (id) => {

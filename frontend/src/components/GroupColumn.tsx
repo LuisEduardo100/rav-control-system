@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { useBoardStore } from '../store/useBoardStore';
 import type { ActivityType } from '../types/activityType';
+import { Trash2 } from 'lucide-react';
 
 interface GroupColumnProps {
   group: GroupType;
@@ -19,7 +20,7 @@ export default function GroupColumn({
 }: GroupColumnProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [groupName, setGroupName] = useState(group.name);
-  const { updateGroup } = useBoardStore();
+  const { updateGroup, deleteGroup } = useBoardStore();
 
   const { setNodeRef } = useDroppable({
     id: `group-${group.id}`,
@@ -53,12 +54,22 @@ export default function GroupColumn({
     setIsEditing(false);
   };
 
+  const handleDeleteGroup = () => {
+    if (
+      window.confirm(
+        `Tem certeza que deseja excluir o grupo "${group.name}"? Todas as atividades contidas nele também serão excluídas.`
+      )
+    ) {
+      deleteGroup(group.id);
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
       className="flex w-72 flex-shrink-0 flex-col rounded-lg bg-stone-200 shadow-md"
     >
-      <div className="rounded-t-lg bg-blue-600 p-3 text-white">
+      <div className="flex items-center justify-between rounded-t-lg bg-blue-600 p-3 text-white">
         {isEditing ? (
           <input
             autoFocus
@@ -76,6 +87,13 @@ export default function GroupColumn({
             {group.name}
           </h3>
         )}
+        <button
+          onClick={handleDeleteGroup}
+          className="rounded p-1 opacity-60 hover:opacity-100 cursor-pointer"
+          aria-label={`Excluir grupo ${group.name}`}
+        >
+          <Trash2 size={16} />
+        </button>
       </div>
 
       <div className="flex-grow p-3">
