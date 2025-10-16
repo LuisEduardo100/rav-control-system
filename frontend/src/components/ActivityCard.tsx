@@ -5,7 +5,7 @@ import { isPast, parseISO } from 'date-fns';
 import { useBoardStore } from '../store/useBoardStore';
 import { Calendar, Trash2 } from 'lucide-react';
 import { useActivityStore } from '../store/useActivityStore';
-import { formatDueDate } from '../hooks/dateUtils';
+import { formatDueDate } from '../utils/dateUtils';
 
 interface ActivityCardProps {
   activity: ActivityType;
