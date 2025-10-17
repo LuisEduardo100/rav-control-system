@@ -22,7 +22,7 @@ export default function AddGroupButton() {
   });
 
   const onAddNewGroup = async (data: RequiredNameFormData) => {
-    await createGroup(data.name.trim());
+    await createGroup({ name: data.name.trim() });
     reset({ name: '' });
     setIsAdding(false);
   };

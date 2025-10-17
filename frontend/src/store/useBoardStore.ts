@@ -1,18 +1,17 @@
 import { create } from 'zustand';
 import { arrayMove } from '@dnd-kit/sortable';
-import { api } from '../services/api';
 import { activityService } from '../services/activityService';
 import { useActivityStore } from './useActivityStore';
-import type { GroupType } from '../types/groupType';
 import { useToastStore } from './useToastStore';
 import type { BoardStoreType } from '../types/boardStoreType';
+import { groupService } from '../services/groupService';
 
 export const useBoardStore = create<BoardStoreType>((set, get) => ({
   groups: [],
 
   fetchGroups: async () => {
     try {
-      const { data } = await api.get<GroupType[]>('/groups');
+      const data = await groupService.getAll();
 
       const sortedGroups = [...data].sort((a, b) => a.position - b.position);
 
@@ -37,8 +36,8 @@ export const useBoardStore = create<BoardStoreType>((set, get) => ({
 
   createGroup: async (name) => {
     try {
-      const { data } = await api.post<GroupType>('/groups', { name });
-      set((state) => ({ groups: [...state.groups, data] }));
+      const newGroup = await groupService.create(name);
+      set((state) => ({ groups: [...state.groups, newGroup] }));
       useToastStore
         .getState()
         .addToast(`Grupo "${name}" criado com sucesso!`, 'success');
@@ -55,7 +54,7 @@ export const useBoardStore = create<BoardStoreType>((set, get) => ({
     }));
 
     try {
-      await api.put(`/groups/${id}`, { name });
+      await groupService.update(id, name);
       useToastStore.getState().addToast('Grupo atualizado!', 'success');
     } catch (error) {
       console.error('Falha ao atualizar o grupo. Revertendo.', error);
@@ -73,7 +72,7 @@ export const useBoardStore = create<BoardStoreType>((set, get) => ({
     }));
 
     try {
-      await api.delete(`/groups/${id}`);
+      await groupService.remove(id);
       useToastStore
         .getState()
         .addToast(`"${groupName}" foi excluído.`, 'success');

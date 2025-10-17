@@ -7,6 +7,14 @@ export type GroupType = {
   activities: ActivityType[];
 };
 
+export interface CreateGroupRequestDTO {
+  name: string;
+}
+
+export interface UpdateGroupRequestDTO {
+  name: string;
+}
+
 export interface GroupColumnProps {
   group: GroupType;
   activeActivity: ActivityType | null;
