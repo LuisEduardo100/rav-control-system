@@ -18,7 +18,7 @@ import AddGroupButton from './AddGroupButton';
 import ActivityCard from './activity/ActivityCard';
 import type { ActivityType } from '../types/activityType';
 import { useHorizontalScroll } from '../hooks/useHorizontalScroll';
-import { isPast, parseISO } from 'date-fns';
+import { isDateOverdue } from '../utils/dateUtils';
 
 export default function Board() {
   const {
@@ -67,7 +67,7 @@ export default function Board() {
             (activity) =>
               activity.dueDate &&
               !activity.completed &&
-              isPast(parseISO(activity.dueDate))
+              isDateOverdue(activity.dueDate)
           ),
         }))
         .filter((group) => group.activities.length > 0);

@@ -1,4 +1,4 @@
-import { format, parseISO, isValid, startOfDay } from 'date-fns';
+import { format, parseISO, isValid, startOfDay, isBefore } from 'date-fns';
 
 export const formatDueDate = (
   dateString: string | null | undefined
@@ -43,4 +43,23 @@ export const isDateInTheFutureOrToday = (
     return false;
   }
   return startOfDay(date) >= startOfDay(new Date());
+};
+
+export const isDateOverdue = (
+  dateString: string | null | undefined
+): boolean => {
+  if (!dateString) {
+    return false;
+  }
+
+  try {
+    const date = parseISO(dateString);
+    if (!isValid(date)) {
+      return false;
+    }
+
+    return isBefore(date, startOfDay(new Date()));
+  } catch {
+    return false;
+  }
 };

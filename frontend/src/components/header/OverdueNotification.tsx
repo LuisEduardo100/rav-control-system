@@ -1,8 +1,8 @@
 import { useBoardStore } from '../../store/useBoardStore';
-import { isPast, parseISO } from 'date-fns';
 import { Bell } from 'lucide-react';
 import { useRef, useState } from 'react';
 import Tooltip from './Tooltip';
+import { isDateOverdue } from '../../utils/dateUtils';
 
 export default function OverdueNotification() {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
@@ -21,7 +21,7 @@ export default function OverdueNotification() {
           (activity) =>
             activity.dueDate &&
             !activity.completed &&
-            isPast(parseISO(activity.dueDate))
+            isDateOverdue(activity.dueDate)
         ).length
   );
 

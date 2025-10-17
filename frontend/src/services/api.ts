@@ -6,5 +6,3 @@ export const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
-api.get('/groups').then(console.log);

@@ -1,11 +1,10 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { ActivityCardProps } from '../../types/activityType';
-import { isPast, parseISO } from 'date-fns';
 import { useBoardStore } from '../../store/useBoardStore';
 import { Clock, Trash2 } from 'lucide-react';
 import { useActivityStore } from '../../store/useActivityStore';
-import { formatDueDate } from '../../utils/dateUtils';
+import { formatDueDate, isDateOverdue } from '../../utils/dateUtils';
 import { useToastStore } from '../../store/useToastStore';
 
 export default function ActivityCard({ activity, groupId }: ActivityCardProps) {
@@ -29,10 +28,7 @@ export default function ActivityCard({ activity, groupId }: ActivityCardProps) {
   const { openEditActivityModal } = useActivityStore();
   const showConfirmation = useToastStore((state) => state.showConfirmation);
 
-  const isOverdue =
-    activity.dueDate &&
-    isPast(parseISO(activity.dueDate)) &&
-    !activity.completed;
+  const isOverdue = isDateOverdue(activity.dueDate) && !activity.completed;
 
   const hasStatusInfo = activity.dueDate || activity.completed;
 
