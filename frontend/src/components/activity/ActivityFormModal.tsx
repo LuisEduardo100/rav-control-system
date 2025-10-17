@@ -71,7 +71,7 @@ export default function ActivityFormModal() {
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-        <DialogPanel className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
+        <DialogPanel className="w-full max-w-md rounded-xl bg-stone-200 p-6 shadow-xl">
           <DialogTitle className="text-xl font-bold text-gray-800">
             {editingActivity ? (
               <div className="flex items-center gap-2">
@@ -97,7 +97,7 @@ export default function ActivityFormModal() {
               <input
                 {...register('name')}
                 id="name"
-                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 p-2 block w-full rounded-md border-1 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 autoFocus
               />
               {errors.name && (
@@ -118,7 +118,7 @@ export default function ActivityFormModal() {
                 {...register('description')}
                 id="description"
                 rows={4}
-                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 p-2 block w-full rounded-md border-1 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
 
@@ -134,7 +134,7 @@ export default function ActivityFormModal() {
                   type="date"
                   {...register('dueDate')}
                   id="dueDate"
-                  className="cursor-text mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm"
+                  className="cursor-text mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm border-1"
                 />
                 {errors.dueDate && (
                   <p className="mt-1 text-sm text-red-600">
