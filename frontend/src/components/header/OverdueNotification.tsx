@@ -52,7 +52,11 @@ export default function OverdueNotification() {
         className="flex items-center gap-2 rounded-md px-3 py-2 cursor-pointer"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onClick={() => overdueCount > 0 && toggleOverdueFilter}
+        onClick={() => {
+          if (overdueCount > 0) {
+            return toggleOverdueFilter();
+          }
+        }}
       >
         <Bell
           size={32}
