@@ -39,7 +39,7 @@ export default function OverdueNotification() {
   };
 
   const tooltipMessageOverduecount = `Você tem ${overdueCount} ${
-    overdueCount > 0
+    overdueCount > 1
       ? 'atividades atrasadas. Clique para saber quais.'
       : 'atividade atrasada. Clique para saber qual.'
   }`;
