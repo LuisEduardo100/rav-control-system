@@ -38,11 +38,13 @@ export default function OverdueNotification() {
     setIsTooltipVisible(false);
   };
 
-  const tooltipMessage = `Você tem ${overdueCount} ${
-    overdueCount > 1
+  const tooltipMessageOverduecount = `Você tem ${overdueCount} ${
+    overdueCount > 0
       ? 'atividades atrasadas. Clique para saber quais.'
       : 'atividade atrasada. Clique para saber qual.'
   }`;
+
+  const tooltipMessageNoOverduecount = 'Você não tem tarefas pendentes.';
 
   return (
     <div className="relative">
@@ -50,7 +52,7 @@ export default function OverdueNotification() {
         className="flex items-center gap-2 rounded-md px-3 py-2 cursor-pointer"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onClick={toggleOverdueFilter}
+        onClick={() => overdueCount > 0 && toggleOverdueFilter}
       >
         <Bell
           size={32}
@@ -75,8 +77,11 @@ export default function OverdueNotification() {
             {overdueCount}
           </span>
         )}
-        {isTooltipVisible && !isFilteringOverdue && (
-          <Tooltip message={tooltipMessage} />
+        {overdueCount > 0 && isTooltipVisible && !isFilteringOverdue && (
+          <Tooltip message={tooltipMessageOverduecount} />
+        )}
+        {overdueCount == 0 && isTooltipVisible && (
+          <Tooltip message={tooltipMessageNoOverduecount} />
         )}
       </div>
     </div>
