@@ -18,10 +18,16 @@ import AddGroupButton from './AddGroupButton';
 import ActivityCard from './activity/ActivityCard';
 import type { ActivityType } from '../types/activityType';
 import { useHorizontalScroll } from '../hooks/useHorizontalScroll';
+import { isPast, parseISO } from 'date-fns';
 
 export default function Board() {
-  const { groups, fetchGroups, moveActivity, persistActivityMove } =
-    useBoardStore();
+  const {
+    groups,
+    fetchGroups,
+    moveActivity,
+    persistActivityMove,
+    isFilteringOverdue,
+  } = useBoardStore();
   const [activeActivity, setActiveActivity] = useState<ActivityType | null>(
     null
   );
@@ -39,21 +45,36 @@ export default function Board() {
   );
 
   const filteredGroups = useMemo(() => {
-    if (!searchTerm) {
-      return groups;
+    let tempGroups = groups;
+
+    if (searchTerm) {
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+      tempGroups = tempGroups
+        .map((group) => ({
+          ...group,
+          activities: group.activities.filter((activity) =>
+            activity.name.toLowerCase().includes(lowerCaseSearchTerm)
+          ),
+        }))
+        .filter((group) => group.activities.length > 0);
     }
 
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    if (isFilteringOverdue) {
+      tempGroups = tempGroups
+        .map((group) => ({
+          ...group,
+          activities: group.activities.filter(
+            (activity) =>
+              activity.dueDate &&
+              !activity.completed &&
+              isPast(parseISO(activity.dueDate))
+          ),
+        }))
+        .filter((group) => group.activities.length > 0);
+    }
 
-    return groups
-      .map((group) => ({
-        ...group,
-        activities: group.activities.filter((activity) =>
-          activity.name.toLowerCase().includes(lowerCaseSearchTerm)
-        ),
-      }))
-      .filter((group) => group.activities.length > 0);
-  }, [groups, searchTerm]);
+    return tempGroups;
+  }, [groups, searchTerm, isFilteringOverdue]);
 
   useEffect(() => {
     fetchGroups();

@@ -12,6 +12,12 @@ export const useBoardStore = create<BoardStoreType>((set, get) => ({
 
   setSearchTerm: (term) => set({ searchTerm: term }),
 
+  isFilteringOverdue: false,
+
+  toggleOverdueFilter: () => {
+    set((state) => ({ isFilteringOverdue: !state.isFilteringOverdue }));
+  },
+
   fetchGroups: async () => {
     try {
       const data = await groupService.getAll();

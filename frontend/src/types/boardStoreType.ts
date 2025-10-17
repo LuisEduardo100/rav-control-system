@@ -33,4 +33,6 @@ export interface BoardStoreType {
   deleteActivity: (activityId: number, groupId: number) => Promise<void>;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
+  isFilteringOverdue: boolean;
+  toggleOverdueFilter: () => void;
 }
