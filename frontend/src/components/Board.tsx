@@ -156,7 +156,7 @@ export default function Board() {
     >
       <div
         ref={scrollRef}
-        className="flex h-full items-start gap-10 overflow-x-auto px-4"
+        className="flex h-full items-start gap-10 overflow-x-auto px-9"
       >
         {filteredGroups.map((group) => (
           <GroupColumn
