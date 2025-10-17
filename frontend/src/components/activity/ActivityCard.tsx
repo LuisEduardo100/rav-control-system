@@ -1,12 +1,12 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type { ActivityCardProps } from '../types/activityType';
+import type { ActivityCardProps } from '../../types/activityType';
 import { isPast, parseISO } from 'date-fns';
-import { useBoardStore } from '../store/useBoardStore';
+import { useBoardStore } from '../../store/useBoardStore';
 import { Clock, Trash2 } from 'lucide-react';
-import { useActivityStore } from '../store/useActivityStore';
-import { formatDueDate } from '../utils/dateUtils';
-import { useToastStore } from '../store/useToastStore';
+import { useActivityStore } from '../../store/useActivityStore';
+import { formatDueDate } from '../../utils/dateUtils';
+import { useToastStore } from '../../store/useToastStore';
 
 export default function ActivityCard({ activity, groupId }: ActivityCardProps) {
   const {

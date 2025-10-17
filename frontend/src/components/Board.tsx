@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   closestCorners,
   DndContext,
@@ -15,7 +15,7 @@ import type {
 import { useBoardStore } from '../store/useBoardStore';
 import GroupColumn from './GroupColumn';
 import AddGroupButton from './AddGroupButton';
-import ActivityCard from './ActivityCard';
+import ActivityCard from './activity/ActivityCard';
 import type { ActivityType } from '../types/activityType';
 import { useHorizontalScroll } from '../hooks/useHorizontalScroll';
 
@@ -26,6 +26,7 @@ export default function Board() {
     null
   );
   const [overGroupId, setOverGroupId] = useState<number | null>(null);
+  const searchTerm = useBoardStore((state) => state.searchTerm);
 
   const scrollRef = useHorizontalScroll();
 
@@ -36,6 +37,23 @@ export default function Board() {
       },
     })
   );
+
+  const filteredGroups = useMemo(() => {
+    if (!searchTerm) {
+      return groups;
+    }
+
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+    return groups
+      .map((group) => ({
+        ...group,
+        activities: group.activities.filter((activity) =>
+          activity.name.toLowerCase().includes(lowerCaseSearchTerm)
+        ),
+      }))
+      .filter((group) => group.activities.length > 0);
+  }, [groups, searchTerm]);
 
   useEffect(() => {
     fetchGroups();
@@ -140,7 +158,7 @@ export default function Board() {
         ref={scrollRef}
         className="flex h-full items-start gap-10 overflow-x-auto px-4"
       >
-        {groups.map((group) => (
+        {filteredGroups.map((group) => (
           <GroupColumn
             key={group.id}
             group={group}

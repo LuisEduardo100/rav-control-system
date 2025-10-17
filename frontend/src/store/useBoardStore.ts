@@ -8,6 +8,9 @@ import { groupService } from '../services/groupService';
 
 export const useBoardStore = create<BoardStoreType>((set, get) => ({
   groups: [],
+  searchTerm: '',
+
+  setSearchTerm: (term) => set({ searchTerm: term }),
 
   fetchGroups: async () => {
     try {
@@ -34,27 +37,30 @@ export const useBoardStore = create<BoardStoreType>((set, get) => ({
     }
   },
 
-  createGroup: async (name) => {
+  createGroup: async (dto) => {
     try {
-      const newGroup = await groupService.create(name);
+      const newGroup = await groupService.create(dto);
       set((state) => ({ groups: [...state.groups, newGroup] }));
       useToastStore
         .getState()
-        .addToast(`Grupo "${name}" criado com sucesso!`, 'success');
+        .addToast(`Grupo "${newGroup.name}" criado com sucesso!`, 'success');
     } catch (error) {
       console.error('Falha ao criar o grupo.', error);
       useToastStore.getState().addToast('Falha ao criar o grupo.', 'error');
     }
   },
 
-  updateGroup: async (id, name) => {
+  updateGroup: async (groupId, dto) => {
     const previousGroups = get().groups;
+
     set((state) => ({
-      groups: state.groups.map((g) => (g.id === id ? { ...g, name } : g)),
+      groups: state.groups.map((g) =>
+        g.id === groupId ? { ...g, ...dto } : g
+      ),
     }));
 
     try {
-      await groupService.update(id, name);
+      await groupService.update(groupId, dto);
       useToastStore.getState().addToast('Grupo atualizado!', 'success');
     } catch (error) {
       console.error('Falha ao atualizar o grupo. Revertendo.', error);

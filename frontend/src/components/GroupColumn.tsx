@@ -1,5 +1,5 @@
 import { SortableContext } from '@dnd-kit/sortable';
-import ActivityCard from './ActivityCard';
+import ActivityCard from './activity/ActivityCard';
 import type { GroupColumnProps } from '../types/groupType';
 import { useEffect, useMemo, useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
@@ -67,7 +67,7 @@ export default function GroupColumn({
       setIsEditing(false);
       return;
     }
-    updateGroup(group.id, data.name.trim());
+    updateGroup(group.id, { name: data.name.trim() });
     setIsEditing(false);
   };
 
