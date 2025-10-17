@@ -32,6 +32,7 @@ public class ActivityGroup {
         cascade = CascadeType.ALL,
         fetch = FetchType.LAZY
     )
+    @OrderBy("position ASC")
     private List<Activity> activities = new ArrayList<>();
 
     @PrePersist
