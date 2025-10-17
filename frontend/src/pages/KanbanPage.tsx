@@ -8,10 +8,9 @@ export default function KanbanPage() {
   return (
     <div className="flex h-screen flex-col bg-gray-900 text-white">
       <AppHeader />
-      <section className="flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden">
         <Board />
-      </section>
-
+      </main>
       <ActivityFormModal />
       <Toaster />
       <ConfirmationToast />
