@@ -6,3 +6,9 @@ export type GroupType = {
   position: number;
   activities: ActivityType[];
 };
+
+export interface GroupColumnProps {
+  group: GroupType;
+  activeActivity: ActivityType | null;
+  overGroupId: number | null;
+}

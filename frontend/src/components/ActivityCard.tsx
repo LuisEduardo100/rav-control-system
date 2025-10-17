@@ -1,16 +1,12 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import type { ActivityType } from '../types/activityType';
+import type { ActivityCardProps } from '../types/activityType';
 import { isPast, parseISO } from 'date-fns';
 import { useBoardStore } from '../store/useBoardStore';
 import { Clock, Trash2 } from 'lucide-react';
 import { useActivityStore } from '../store/useActivityStore';
 import { formatDueDate } from '../utils/dateUtils';
-
-interface ActivityCardProps {
-  activity: ActivityType;
-  groupId: number;
-}
+import { useToastStore } from '../store/useToastStore';
 
 export default function ActivityCard({ activity, groupId }: ActivityCardProps) {
   const {
@@ -31,6 +27,7 @@ export default function ActivityCard({ activity, groupId }: ActivityCardProps) {
 
   const { deleteActivity, updateActivity } = useBoardStore();
   const { openEditActivityModal } = useActivityStore();
+  const showConfirmation = useToastStore((state) => state.showConfirmation);
 
   const isOverdue =
     activity.dueDate &&
@@ -41,13 +38,11 @@ export default function ActivityCard({ activity, groupId }: ActivityCardProps) {
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (
-      window.confirm(
-        `Tem certeza que deseja excluir a atividade "${activity.name}"?`
-      )
-    ) {
-      deleteActivity(activity.id, activity.groupId);
-    }
+    showConfirmation(
+      `Excluir a atividade "${activity.name}"?`,
+      'Esta ação não pode ser desfeita.',
+      () => deleteActivity(activity.id, activity.groupId)
+    );
   };
 
   const handleToggleCompletion = (e: React.ChangeEvent<HTMLInputElement>) => {

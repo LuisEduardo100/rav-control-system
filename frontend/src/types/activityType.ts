@@ -35,3 +35,8 @@ export interface MoveActivityRequestDTO {
   targetGroupId: number;
   newPosition: number;
 }
+
+export interface ActivityCardProps {
+  activity: ActivityType;
+  groupId: number;
+}

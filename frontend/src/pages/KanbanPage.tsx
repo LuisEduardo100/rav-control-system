@@ -1,5 +1,7 @@
 import ActivityFormModal from '../components/ActivityFormModal';
 import Board from '../components/Board';
+import ConfirmationToast from '../components/ConfirmationToast';
+import Toaster from '../components/Toaster';
 
 export default function KanbanPage() {
   return (
@@ -16,6 +18,8 @@ export default function KanbanPage() {
       </section>
 
       <ActivityFormModal />
+      <Toaster />
+      <ConfirmationToast />
     </div>
   );
 }

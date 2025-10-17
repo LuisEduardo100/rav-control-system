@@ -4,37 +4,10 @@ import { api } from '../services/api';
 import { activityService } from '../services/activityService';
 import { useActivityStore } from './useActivityStore';
 import type { GroupType } from '../types/groupType';
-import type {
-  CreateActivityRequestDTO,
-  UpdateActivityRequestDTO,
-  MoveActivityRequestDTO,
-} from '../types/activityType';
+import { useToastStore } from './useToastStore';
+import type { BoardStoreType } from '../types/boardStoreType';
 
-interface BoardStore {
-  groups: GroupType[];
-  fetchGroups: () => Promise<void>;
-  createGroup: (name: string) => Promise<void>;
-  updateGroup: (id: number, name: string) => Promise<void>;
-  deleteGroup: (id: number) => Promise<void>;
-  moveActivity: (
-    sourceGroupId: number,
-    targetGroupId: number,
-    sourceIndex: number,
-    targetIndex: number
-  ) => void;
-  persistActivityMove: (
-    activityId: number,
-    payload: MoveActivityRequestDTO
-  ) => Promise<void>;
-  createActivity: (dto: CreateActivityRequestDTO) => Promise<void>;
-  updateActivity: (
-    activityId: number,
-    dto: UpdateActivityRequestDTO
-  ) => Promise<void>;
-  deleteActivity: (activityId: number, groupId: number) => Promise<void>;
-}
-
-export const useBoardStore = create<BoardStore>((set, get) => ({
+export const useBoardStore = create<BoardStoreType>((set, get) => ({
   groups: [],
 
   fetchGroups: async () => {
@@ -56,6 +29,9 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       set({ groups: groupsWithSortedActivities });
     } catch (error) {
       console.error('Falha ao buscar os grupos.', error);
+      useToastStore
+        .getState()
+        .addToast('Não foi possível carregar o quadro.', 'error');
     }
   },
 
@@ -63,8 +39,12 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
     try {
       const { data } = await api.post<GroupType>('/groups', { name });
       set((state) => ({ groups: [...state.groups, data] }));
+      useToastStore
+        .getState()
+        .addToast(`Grupo "${name}" criado com sucesso!`, 'success');
     } catch (error) {
       console.error('Falha ao criar o grupo.', error);
+      useToastStore.getState().addToast('Falha ao criar o grupo.', 'error');
     }
   },
 
@@ -76,23 +56,31 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
 
     try {
       await api.put(`/groups/${id}`, { name });
+      useToastStore.getState().addToast('Grupo atualizado!', 'success');
     } catch (error) {
       console.error('Falha ao atualizar o grupo. Revertendo.', error);
       set({ groups: previousGroups });
+      useToastStore.getState().addToast('Falha ao atualizar o grupo.', 'error');
     }
   },
 
   deleteGroup: async (id) => {
     const previousGroups = get().groups;
+    const groupToDelete = previousGroups.find((g) => g.id === id);
+    const groupName = groupToDelete ? groupToDelete.name : 'Grupo';
     set((state) => ({
       groups: state.groups.filter((g) => g.id !== id),
     }));
 
     try {
       await api.delete(`/groups/${id}`);
+      useToastStore
+        .getState()
+        .addToast(`"${groupName}" foi excluído.`, 'success');
     } catch (error) {
       console.error('Falha ao excluir o grupo. Revertendo.', error);
       set({ groups: previousGroups });
+      useToastStore.getState().addToast('Falha ao excluir o grupo.', 'error');
     }
   },
 
@@ -109,6 +97,7 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
       useActivityStore.getState().closeActivityModal();
     } catch (error) {
       console.error('Falha ao criar atividade.', error);
+      useToastStore.getState().addToast('Falha ao criar a atividade.', 'error');
     }
   },
 
@@ -134,9 +123,13 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
 
     try {
       await activityService.update(activityId, dto, activityToUpdate.groupId);
+      useToastStore.getState().addToast('Atividade atualizada!', 'success');
     } catch (error) {
       console.error('Falha ao atualizar atividade. Revertendo.', error);
       set({ groups: previousGroups });
+      useToastStore
+        .getState()
+        .addToast('Falha ao atualizar a atividade.', 'error');
     }
   },
 
@@ -166,8 +159,10 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
 
     try {
       await activityService.remove(activityId);
-    } catch (error) {
-      console.error('Falha ao excluir atividade. Revertendo.', error);
+    } catch {
+      useToastStore
+        .getState()
+        .addToast('Falha ao excluir a atividade.', 'error');
       set({ groups: previousGroups });
     }
   },
@@ -201,11 +196,16 @@ export const useBoardStore = create<BoardStore>((set, get) => ({
   },
 
   persistActivityMove: async (activityId, payload) => {
+    const previousGroups = get().groups;
+
     try {
       await activityService.move(activityId, payload);
     } catch (error) {
       console.error('Falha ao salvar a nova posição. Revertendo.', error);
-      get().fetchGroups();
+      set({ groups: previousGroups });
+      useToastStore
+        .getState()
+        .addToast('Não foi possível salvar a nova ordem.', 'error');
     }
   },
 }));

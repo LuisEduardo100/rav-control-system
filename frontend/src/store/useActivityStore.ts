@@ -1,14 +1,5 @@
 import { create } from 'zustand';
-import type { ActivityType } from '../types/activityType';
-
-interface ActivityStore {
-  isActivityModalOpen: boolean;
-  editingActivity: ActivityType | null;
-  targetGroupIdForNewActivity: number | null;
-  openCreateActivityModal: (groupId: number) => void;
-  openEditActivityModal: (activity: ActivityType) => void;
-  closeActivityModal: () => void;
-}
+import type { ActivityStore } from '../types/activityStoreType';
 
 export const useActivityStore = create<ActivityStore>((set) => ({
   isActivityModalOpen: false,

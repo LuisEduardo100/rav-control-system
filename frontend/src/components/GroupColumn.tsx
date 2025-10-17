@@ -1,10 +1,9 @@
 import { SortableContext } from '@dnd-kit/sortable';
 import ActivityCard from './ActivityCard';
-import type { GroupType } from '../types/groupType';
+import type { GroupColumnProps } from '../types/groupType';
 import { useEffect, useMemo, useState } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { useBoardStore } from '../store/useBoardStore';
-import type { ActivityType } from '../types/activityType';
 import { CirclePlus, Trash2 } from 'lucide-react';
 import { useActivityStore } from '../store/useActivityStore';
 import { useForm } from 'react-hook-form';
@@ -13,12 +12,7 @@ import {
   requiredNameSchema,
   type RequiredNameFormData,
 } from '../validation/commonSchemas';
-
-interface GroupColumnProps {
-  group: GroupType;
-  activeActivity: ActivityType | null;
-  overGroupId: number | null;
-}
+import { useToastStore } from '../store/useToastStore';
 
 export default function GroupColumn({
   group,
@@ -28,6 +22,7 @@ export default function GroupColumn({
   const [isEditing, setIsEditing] = useState(false);
   const { updateGroup, deleteGroup } = useBoardStore();
   const { openCreateActivityModal } = useActivityStore();
+  const showConfirmation = useToastStore((state) => state.showConfirmation);
 
   const { setNodeRef } = useDroppable({
     id: `group-${group.id}`,
@@ -77,13 +72,11 @@ export default function GroupColumn({
   };
 
   const handleDeleteGroup = () => {
-    if (
-      window.confirm(
-        `Tem certeza que deseja excluir o grupo "${group.name}"? Todas as atividades contidas nele também serão excluídas.`
-      )
-    ) {
-      deleteGroup(group.id);
-    }
+    showConfirmation(
+      `Excluir o grupo "${group.name}"?`,
+      'Todas as atividades contidas nele também serão excluídas. Esta ação não pode ser desfeita.',
+      () => deleteGroup(group.id)
+    );
   };
 
   return (

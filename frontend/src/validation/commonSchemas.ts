@@ -18,7 +18,7 @@ export const activitySchema = requiredNameSchema.extend({
       message: 'Data inválida.',
     })
     .refine(isDateInTheFutureOrToday, {
-      message: 'A data de entrega não pode ser no passado.',
+      message: 'Adicione um data de entrega válida',
     }),
   completed: z.boolean().optional(),
 });
