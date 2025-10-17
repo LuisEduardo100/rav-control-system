@@ -1,4 +1,4 @@
-import { useToastStore } from '../store/useToastStore';
+import { useToastStore } from '../../store/useToastStore';
 import ToastMessage from './ToastMessage';
 
 export default function Toaster() {

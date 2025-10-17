@@ -3,13 +3,17 @@ import type {
   MoveActivityRequestDTO,
   UpdateActivityRequestDTO,
 } from './activityType';
-import type { GroupType } from './groupType';
+import type {
+  CreateGroupRequestDTO,
+  GroupType,
+  UpdateGroupRequestDTO,
+} from './groupType';
 
 export interface BoardStoreType {
   groups: GroupType[];
   fetchGroups: () => Promise<void>;
-  createGroup: (name: string) => Promise<void>;
-  updateGroup: (id: number, name: string) => Promise<void>;
+  createGroup: (dto: CreateGroupRequestDTO) => Promise<void>;
+  updateGroup: (id: number, dto: UpdateGroupRequestDTO) => Promise<void>;
   deleteGroup: (id: number) => Promise<void>;
   moveActivity: (
     sourceGroupId: number,
@@ -27,4 +31,6 @@ export interface BoardStoreType {
     dto: UpdateActivityRequestDTO
   ) => Promise<void>;
   deleteActivity: (activityId: number, groupId: number) => Promise<void>;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
 }

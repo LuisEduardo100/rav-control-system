@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle, XCircle, Info } from 'lucide-react';
-import { useToastStore } from '../store/useToastStore';
-import type { ToastMessageProps } from '../types/toastType';
+import { useToastStore } from '../../store/useToastStore';
+import type { ToastMessageProps } from '../../types/toastType';
 
 const toastConfig = {
   success: {

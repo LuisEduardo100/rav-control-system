@@ -15,7 +15,7 @@ import type {
 import { useBoardStore } from '../store/useBoardStore';
 import GroupColumn from './GroupColumn';
 import AddGroupButton from './AddGroupButton';
-import ActivityCard from './ActivityCard';
+import ActivityCard from './activity/ActivityCard';
 import type { ActivityType } from '../types/activityType';
 import { useHorizontalScroll } from '../hooks/useHorizontalScroll';
 

@@ -1,14 +1,14 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useBoardStore } from '../store/useBoardStore';
-import { useActivityStore } from '../store/useActivityStore';
+import { useBoardStore } from '../../store/useBoardStore';
+import { useActivityStore } from '../../store/useActivityStore';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { useEffect } from 'react';
 import { Newspaper, Pencil } from 'lucide-react';
 import {
   activitySchema,
   type ActivityFormData,
-} from '../validation/commonSchemas';
+} from '../../validation/commonSchemas';
 
 export default function ActivityFormModal() {
   const {

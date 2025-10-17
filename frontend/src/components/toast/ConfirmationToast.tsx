@@ -1,4 +1,4 @@
-import { useToastStore } from '../store/useToastStore';
+import { useToastStore } from '../../store/useToastStore';
 
 export default function ConfirmationToast() {
   const { confirmation, hideConfirmation } = useToastStore();
