@@ -25,45 +25,54 @@
 
 ## Apresentação do Projeto
 
-O Quadro de Atividades é uma aplicação Full Stack que simula um ambiente de gerenciamento de tarefas. A interface permite a criação dinâmica de grupos (colunas) e atividades (cards), com total interatividade.
+O Quadro de Atividades é uma aplicação Full Stack que simula um ambiente de gerenciamento de tarefas. A interface permite a criação dinâmica de grupos (colunas) e atividades (cards), incluíndo editar e deletar grupos e atividades dinamicamente. Marcar atividades como concluído, pesquisar por atividades em grupos e saber quais e quantas atividades estão em atraso de maneira rápida.
 
 **Funcionalidades Principais:**
 
-- Criação, edição e exclusão de grupos e atividades.
-- Movimentação de atividades entre grupos com drag-and-drop.
-- Validação de formulários com tratamento de erros em tempo real.
-- Sistema de notificação de atividades atrasadas com tooltip informativo.
-- Busca dinâmica de atividades por nome.
-- Interface reativa com atualizações otimistas e toasts de feedback para uma experiência de usuário fluida.
+<details>
+  <summary><strong>Visão Geral e Gerenciamento de Grupos</strong></summary>
+  <br>
+  <em>Visão completa do quadro Kanban e o processo de criação de um novo grupo.</em>
+  <br><br>
+  <img src="./.github/assets/kanban-board.png" alt="Visão Geral do Quadro Kanban" width="750">
+  <img src="./.github/assets/kanban-board-add-group.png" alt="Adicionando um novo grupo" width="750">
+</details>
 
-**Visão Geral do Quadro:**
-![Visão Geral do Quadro Kanban](./.github/assets/kanban-board.png)
-![Adicionar novo grupo](./.github/assets/kanban-board-add-group.png)
+<details>
+  <summary><strong>Gerenciamento de Atividades (CRUD)</strong></summary>
+  <br>
+  <em>Telas para criação e edição de atividades, com validação de formulário e campos para data de entrega e status de conclusão.</em>
+  <br><br>
+  <img src="./.github/assets/new-activity.png" alt="Modal de Adicionar Atividade" width="600">
+  <img src="./.github/assets/edit-activity.png" alt="Modal de Edição de Atividade" width="600">
+</details>
 
-**Modal de Edição e Criação de Atividade:**
-![Modal de Edição de Atividade](./.github/assets/edit-activity.png)
-![Modal de Adicionar Atividade](./.github/assets/new-activity.png)
+<details>
+  <summary><strong>Busca e Notificações de Atraso</strong></summary>
+  <br>
+  <em>Funcionalidades de busca em tempo real e um sistema de notificação para atividades atrasadas, que também funciona como um filtro interativo.</em>
+  <br><br>
+  <img src="./.github/assets/search-activities.png" alt="Busca e Notificação" width="750">
+  <img src="./.github/assets/overdue-activity-notification.png" alt="Tooltip da Notificação" width="500">
+  <img src="./.github/assets/overdue-activity-filtered.png" alt="Filtro de Atividades Atrasadas Ativo" width="750">
+</details>
 
-**Busca e Notificação de Atividades Atrasadas:**
-![Busca e Notificação](./.github/assets/search-activities.png)
-![Tooltip da Notificação](./.github/assets/overdue-activity-notification.png)
-
-**Filtro de Atividades Atrasadas:**
-![Filtro de Atividades Atrasadas](./.github/assets/overdue-activity-filtered.png)
-
-**Confirmação de Exclusão:**
-![Confirmação para Excluir Grupo](./.github/assets/delete-group.png)
-![Confirmação para Excluir Atividade](./.github/assets/delete-activity.png)
-
-**Criação de grupos toasts de sucesso**
-![Grupo sendo criado](./.github/assets/kanban-board-creating-group.png)
-![Aviso de sucesso após grupo ser criado](./.github/assets/toast-grupo-criado.png)
-![Aviso após grupo ser deletado](./.github/assets/toast-grupo-deletado.png)
-![Aviso após grupo ser deletado](./.github/assets/toast-atividade-atualizada.png)
+<details>
+  <summary><strong> Ações e Feedback ao Usuário (Toasts)</strong></summary>
+  <br>
+  <em>Sistema de notificação customizado para confirmação de ações destrutivas (exclusão) e feedback de sucesso para operações de CRUD.</em>
+  <br><br>
+  <img src="./.github/assets/kanban-board-creating-group.png" alt="Grupo sendo criado" width="750">
+  <img src="./.github/assets/toast-grupo-criado.png" alt="Aviso de sucesso após grupo ser criado" width="500">
+  <img src="./.github/assets/toast-grupo-deletado.png" alt="Aviso após grupo ser deletado" width="500">
+  <img src="./.github/assets/toast-atividade-atualizada.png" alt="Aviso após atividade ser atualizada" width="500">
+  <img src="./.github/assets/delete-group.png" alt="Confirmação para Excluir Grupo" width="500">
+  <img src="./.github/assets/delete-activity.png" alt="Confirmação para Excluir Atividade" width="500">
+</details>
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 A aplicação foi construída utilizando um ecossistema moderno e robusto, tanto no backend quanto no frontend.
 
@@ -88,7 +97,7 @@ A aplicação foi construída utilizando um ecossistema moderno e robusto, tanto
 
 ---
 
-## ⚙️ Configuração e Instalação
+## Configuração e Instalação
 
 Siga os passos abaixo para configurar e rodar o projeto em seu ambiente local.
 
@@ -178,7 +187,7 @@ A aplicação estará acessível em `http://localhost:5173` (ou outra porta indi
 
 ---
 
-## 🧪 Testando a API
+## Testando a API
 
 Com o backend rodando, você pode usar uma ferramenta como Postman ou Insomnia para testar os endpoints.
 
