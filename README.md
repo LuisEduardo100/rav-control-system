@@ -138,7 +138,16 @@ spring.datasource.username=SEU_USUARIO_ORACLE
 spring.datasource.password=SUA_SENHA_ORACLE
 ```
 
-**4. Rodando o Backend:**
+**4. Dependências Principais (`pom.xml`):**
+O projeto utiliza os seguintes starters e dependências do Spring Boot para sua funcionalidade:
+
+- `spring-boot-starter-data-jpa`: Kit de ferramentas completo para persistência de dados, incluindo o Spring Data JPA e o Hibernate como implementação ORM para mapear as entidades Java para as tabelas do banco de dados.
+- `spring-boot-starter-web`: Fornece todo o necessário para construir a API REST, incluindo o servidor web Tomcat embutido e o Spring MVC.
+- `spring-boot-starter-validation`: Habilita o uso de anotações de validação (ex: `@NotNull`) nos DTOs para garantir a integridade dos dados recebidos nas requisições.
+- `ojdbc11`: O driver JDBC oficial da Oracle, essencial para que a aplicação consiga se comunicar com o banco de dados Oracle.
+- `spring-boot-devtools`: Ferramenta de desenvolvimento que proporciona live reload e outras conveniências para agilizar o ciclo de desenvolvimento.
+
+**5. Rodando o Backend:**
 Dependendo da sua IDE você pode ir até o RavControlBackendApplication e rodar apertando o botão com ícone de play. Mas também você pode ir até a pasta raiz do projeto backend e execute o seguinte comando no seu terminal:
 
 ```bash
