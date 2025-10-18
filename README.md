@@ -1,37 +1,226 @@
-# 🗂️ RAV Control System
+# RAV Control System - Quadro de Atividades
 
-Sistema web de **controle de atividades** desenvolvido como parte do desafio técnico da **RAV Tecnologia**.
+![Java](https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Oracle](https://img.shields.io/badge/Oracle-21c_XE-F80000?style=for-the-badge&logo=oracle&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 
----
-
-## 🎯 Objetivo
-
-O projeto tem como objetivo permitir que o usuário:
-
-- Crie, edite e exclua **grupos de atividades**;
-- Crie, edite, mova e conclua **atividades** (cards);
-- Utilize **drag and drop** para reorganizar atividades entre grupos;
-- Defina **datas de entrega** e visualize **atividades em atraso**;
-- Localize atividades por **pesquisa** de descrição.
+![Demonstração Drag-and-Drop](./.github/assets/gif-kanban.gif)
 
 ---
 
-## 🧰 Stack utilizada
+## 📋 Sumário
 
-### Backend
-
-- **Java 17+**
-- **Spring Boot**
-- **Oracle Database**
-
-### Frontend
-
-- **ReactJS**
-- **TypeScript**
-- **TailwindCSS**
+1. [Apresentação do Projeto](#-apresentação-do-projeto)
+2. [Tecnologias Utilizadas](#️-tecnologias-utilizadas)
+3. [Configuração e Instalação](#️-configuração-e-instalação)
+   - [Backend (Java / Spring Boot)](#backend-java--spring-boot)
+   - [Frontend (React / Vite)](#frontend-react--vite)
+4. [Testando a API](#-testando-a-api)
+5. [Autor](#️-autor)
 
 ---
 
-## 🧪 Status do projeto
+## Apresentação do Projeto
 
-Em desenvolvimento ⚙️
+O Quadro de Atividades é uma aplicação Full Stack que simula um ambiente de gerenciamento de tarefas. A interface permite a criação dinâmica de grupos (colunas) e atividades (cards), com total interatividade.
+
+**Funcionalidades Principais:**
+
+- Criação, edição e exclusão de grupos e atividades.
+- Movimentação de atividades entre grupos com drag-and-drop.
+- Validação de formulários com tratamento de erros em tempo real.
+- Sistema de notificação de atividades atrasadas com tooltip informativo.
+- Busca dinâmica de atividades por nome.
+- Interface reativa com atualizações otimistas e toasts de feedback para uma experiência de usuário fluida.
+
+**Visão Geral do Quadro:**
+![Visão Geral do Quadro Kanban](./.github/assets/kanban-board.png)
+![Adicionar novo grupo](./.github/assets/kanban-board-add-group.png)
+
+**Modal de Edição e Criação de Atividade:**
+![Modal de Edição de Atividade](./.github/assets/edit-activity.png)
+![Modal de Adicionar Atividade](./.github/assets/new-activity.png)
+
+**Busca e Notificação de Atividades Atrasadas:**
+![Busca e Notificação](./.github/assets/search-activities.png)
+![Tooltip da Notificação](./.github/assets/overdue-activity-notification.png)
+
+**Filtro de Atividades Atrasadas:**
+![Filtro de Atividades Atrasadas](./.github/assets/overdue-activity-filtered.png)
+
+**Confirmação de Exclusão:**
+![Confirmação para Excluir Grupo](./.github/assets/delete-group.png)
+![Confirmação para Excluir Atividade](./.github/assets/delete-activity.png)
+
+**Criação de grupos toasts de sucesso**
+![Grupo sendo criado](./.github/assets/kanban-board-creating-group.png)
+![Aviso de sucesso após grupo ser criado](./.github/assets/toast-grupo-criado.png)
+![Aviso após grupo ser deletado](./.github/assets/toast-grupo-deletado.png)
+![Aviso após grupo ser deletado](./.github/assets/toast-atividade-atualizada.png)
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+A aplicação foi construída utilizando um ecossistema moderno e robusto, tanto no backend quanto no frontend.
+
+- **Backend**:
+
+  - Java 17
+  - Spring Boot 3
+  - Spring Data JPA / Hibernate
+  - Maven
+  - Oracle Database 21c XE
+
+- **Frontend**:
+  - React 19 com Vite
+  - TypeScript
+  - Zustand (para gerenciamento de estado)
+  - React Hook Form + Zod (para formulários e validação)
+  - Dnd-Kit (para drag-and-drop)
+  - Axios (para comunicação com a API)
+  - TailwindCSS (para estilização)
+  - Lucide React (para iconografia)
+  - React Router DOM
+
+---
+
+## ⚙️ Configuração e Instalação
+
+Siga os passos abaixo para configurar e rodar o projeto em seu ambiente local.
+
+### Backend (Java / Spring Boot)
+
+**1. Pré-requisitos:**
+
+- JDK 17 ou superior.
+- Maven 3.x.
+- Uma instância do Oracle Database 21c XE rodando localmente ou em rede.
+
+**2. Banco de Dados (Oracle):**
+Primeiro, crie um banco de dados no Oracle Developer e conecte-o com nossa aplicação. Ao passar as credenciais corretamente, só rodar o projeto fará criar as tabelas (activity_group e activities) no banco de dados.
+
+**3. Configuração da Aplicação:**
+O projeto utiliza perfis do Spring para gerenciar as configurações. O arquivo principal é o `application.properties`.
+
+`src/main/resources/application.properties`:
+
+```properties
+spring.application.name=rav-control-backend
+spring.profiles.active=local
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.OracleDialect
+server.port=8080
+```
+
+Crie o arquivo `application-local.properties` na mesma pasta para suas credenciais locais (este arquivo é ignorado pelo Git).
+
+`src/main/resources/application-local.properties`:
+
+```properties
+spring.datasource.url=jdbc:oracle:thin:@localhost:1521:XE
+spring.datasource.username=SEU_USUARIO_ORACLE
+spring.datasource.password=SUA_SENHA_ORACLE
+```
+
+**4. Rodando o Backend:**
+Dependendo da sua IDE você pode ir até o RavControlBackendApplication e rodar apertando o botão com ícone de play. Mas também você pode ir até a pasta raiz do projeto backend e execute o seguinte comando no seu terminal:
+
+```bash
+mvn spring-boot:run
+```
+
+O servidor estará rodando em `http://localhost:8080`, assim como foi definido no application.properties.
+
+### Frontend (React / Vite)
+
+**1. Pré-requisitos:**
+
+- Node.js (versão 18.x ou superior recomendada).
+- NPM ou Yarn.
+
+**2. Clonando o Repositório:**
+
+```bash
+git clone [https://github.com/LuisEduardo100/rav-control-system.git](https://github.com/LuisEduardo100/rav-control-system.git)
+```
+
+**3. Instalação das Dependências:**
+Dentro da pasta rav-control-system, navegue até a pasta do frontend e instale os pacotes necessários.
+
+```bash
+cd frontend
+npm install
+```
+
+**4. Configuração de Ambiente:**
+Crie um arquivo `.env` na raiz da pasta do projeto e adicione a URL base da sua API backend.
+
+```env
+# .env
+VITE_API_BASE_URL=http://localhost:8080/api
+```
+
+**5. Rodando o Frontend:**
+Execute o seguinte comando para iniciar o servidor de desenvolvimento:
+
+```bash
+npm run dev
+```
+
+A aplicação estará acessível em `http://localhost:5173` (ou outra porta indicada no terminal).
+
+---
+
+## 🧪 Testando a API
+
+Com o backend rodando, você pode usar uma ferramenta como Postman ou Insomnia para testar os endpoints.
+
+- **Listar todos os grupos e atividades**
+
+  - **GET** `http://localhost:8080/api/groups`
+  - **Resposta Esperada (Exemplo):**
+    ```json
+    [
+      {
+        "id": 1,
+        "name": "Planejamento",
+        "position": 0,
+        "activities": [
+          {
+            "id": 5,
+            "name": "Definir requisitos",
+            "description": "Detalhar as funcionalidades do projeto.",
+            "dueDate": "2025-10-20",
+            "completed": false,
+            "position": 0
+          }
+        ]
+      }
+    ]
+    ```
+
+- **Criar uma nova atividade**
+  - **POST** `http://localhost:8080/api/activities`
+  - **Corpo da Requisição (JSON):**
+    ```json
+    {
+      "name": "Desenvolver componente de Header",
+      "groupId": 1
+    }
+    ```
+
+---
+
+## Autor
+
+Desenvolvido por **Luís Eduardo**.
+
+- **LinkedIn**: [[Luís Eduardo de Paula Albuquerque](https://www.linkedin.com/in/luis-eduardo-de-paula-albuquerque/)]
+- **GitHub**: [@LuisEduardo100](https://github.com/LuisEduardo100)
