@@ -13,19 +13,19 @@
 
 ## 📋 Sumário
 
-1. [Apresentação do Projeto](#-apresentação-do-projeto)
-2. [Tecnologias Utilizadas](#️-tecnologias-utilizadas)
-3. [Configuração e Instalação](#️-configuração-e-instalação)
-   - [Backend (Java / Spring Boot)](#backend-java--spring-boot)
-   - [Frontend (React / Vite)](#frontend-react--vite)
-4. [Testando a API](#-testando-a-api)
-5. [Autor](#️-autor)
+1.  [Apresentação do Projeto](#apresentação-do-projeto)
+2.  [Tecnologias Utilizadas](#tecnologias-utilizadas)
+3.  [Configuração e Instalação](#configuração-e-instalação)
+    - [Backend (Java / Spring Boot)](#backend-java--spring-boot)
+    - [Frontend (React / Vite)](#frontend-react--vite)
+4.  [Testando a API](#testando-a-api)
+5.  [Autor](#autor)
 
 ---
 
 ## Apresentação do Projeto
 
-O Quadro de Atividades é uma aplicação Full Stack que simula um ambiente de gerenciamento de tarefas. A interface permite a criação dinâmica de grupos (colunas) e atividades (cards), incluíndo editar e deletar grupos e atividades dinamicamente. Marcar atividades como concluído, pesquisar por atividades em grupos e saber quais e quantas atividades estão em atraso de maneira rápida.
+O Quadro de Atividades é uma aplicação Full Stack que simula um ambiente de gerenciamento de tarefas. A interface permite a criação dinâmica de grupos (colunas) e atividades (cards), incluíndo editar e deletar grupos e atividades dinamicamente. Marcar atividades como concluído, pesquisar por atividades em grupos e saber quais e quantas atividades estão em atraso de maneira rápida. Abaixo segue registros das princiapis funcionalidades.
 
 **Funcionalidades Principais:**
 
